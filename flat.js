@@ -6,7 +6,7 @@
  */
 
 var mongoose = require('mongoose'),
-    Schema   = mongoose.Schema,
+    Schema   = mongoose.Schema;
 
 // Stndard RDF/Json Triple
 var rdf_trip_default = {
@@ -16,82 +16,93 @@ var rdf_trip_default = {
         }
 };
 
-//Definieren des Schema
-var RDFTriple = new Schema({
-    subject: String,
-    predicates: [RDFPredicate]
-});
+var NodeMongoRdfFlat = function(host, db, port){
+    
+    //Definieren des Schema
+    var RDFTriple = new Schema({
+        subject: String,
+        predicates: [RDFPredicate]
+    });
 
-var RDFPredicate = new Schema({
-    uri: String,
-    objects: [RDFObject]
-});
+    var RDFPredicate = new Schema({
+        uri: String,
+        objects: [RDFObject]
+    });
 
-var RDFObject = new Schema({
-    value: String,
-    type: String,
-    lang: { type: String, required: false },
-    age: { type: Number, required: false }
-});
+    var RDFObject = new Schema({
+        value: String,
+        type: String,
+        lang: { type: String, required: false }
+    });
 
-mongoose.connect("mongodb://localhost/test");
+    mongoose.connect("mongodb://localhost/test");
 
-mongoose.model('RDFTriple', RDFTriple );
-var RDFTripleModel = mongoose.model('RDFTriple');
-var rdf_test_mongoose;
+    mongoose.model('RDFTriple', RDFTriple );
+    var RDFTripleModel = mongoose.model('RDFTriple');
 
-// 100 Datensätze erzeugen
-for ( i = 0; i < 100; i++){
-    rdf_test_mongoose = new RDFTripleModel();
+    //RDF/Json in Flat Objects und zurück wandeln
+    function _rdf_json_to_flat(rdf){
+        for ( subject in rdf ){
+            flat = {};
+            flat.subject = subject;
+            flat.predicates = [];
+            for ( predicate in rdf[subject] ){
+                for ( object in p = rdf[subject][predicate] ){
+                    var objects = [];
+                    objects.push(p[object]);
+                }
+                flat.predicates.push({'uri': predicate, 'objects': objects});
+            }
+        }
+        return flat;
+    }
 
-    // RDF/Json in Flat umwandeln
-    rdf_trip_mongo = rdf_json_to_flat(rdf_trip_default);
-    rdf_trip_mongo.predicates[1].objects[0].age = i;
-    rdf_test_mongoose.doc = rdf_trip_mongo; 
+    function _flat_to_rdf_json(flat){
+        rdf = {};
+        rdf[flat.subject] = {};
+        for ( p in flat.predicates ){
+            if ( flat.predicates[p].uri !== undefined ){
+                rdf[flat.subject][flat.predicates[p].uri] = [];
+                for ( o in flat.predicates[p].objects ){
+                    rdf[flat.subject][flat.predicates[p].uri].push(flat.predicates[p].objects[o]);
+                }
+            }
+        }
+       return rdf;
+    }
 
-    // DS speichern
-    rdf_test_mongoose.save( function(err){ 
-        if (err) console.log(err); 
-    } );
+    return {
+        insert: function(rdf_triple, callback){
+                    console.log("insert..");
+            obj = new RDFTripleModel();
+            obj.doc = _rdf_json_to_flat(rdf_triple);
+            obj.save(function(err){
+                if(err) callback(err);
+            });
+         },
+
+        findOne: function(query, callback){
+            RDFTripleModel.findOne( function(err, doc){
+                if (err) callback(err);
+                console.log(doc);
+                if (doc) callback(null, _flat_to_rdf_json(doc));
+            });
+        }
+
+    }
 }
 
-// einen Flat-DS holen und als RDF/Json ausgeben
-RDFTripleModel.findOne( function(err, doc){
-    console.log(flat_to_rdf_json(doc));
+/* Test snippet */
+
+test = NodeMongoRdfFlat("localhost", "test");
+
+test.insert(rdf_trip_default, function(err){
+    if (err) console.log("mh"+err.message);
 });
+
+//test.findOne({}, function(err, doc){
+//    if (err) console.log(err);
+//    else console.log(doc);
+//})
 
 //mongoose.disconnect();
-
-
-// Helper #############################################################
-
-//RDF/Json in Flat Objects und zurück wandeln
-function rdf_json_to_flat(rdf){
-    for ( subject in rdf ){
-        flat = {};
-        flat.subject = subject;
-        flat.predicates = [];
-        for ( predicate in rdf[subject] ){
-            for ( object in p = rdf[subject][predicate] ){
-                var objects = [];
-                objects.push(p[object]);
-            }
-            flat.predicates.push({'uri': predicate, 'objects': objects});
-        }
-    }
-    return flat
-}
-
-function flat_to_rdf_json(flat){
-    rdf = {};
-    rdf[flat.subject] = {};
-    for ( p in flat.predicates ){
-        if ( flat.predicates[p].uri !== undefined ){
-            rdf[flat.subject][flat.predicates[p].uri] = [];
-            for ( o in flat.predicates[p].objects ){
-                rdf[flat.subject][flat.predicates[p].uri].push(flat.predicates[p].objects[o]);
-            }
-        }
-    }
-   return rdf;
-}
