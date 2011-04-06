@@ -8,7 +8,7 @@
 var mongoose = require('mongoose'),
     Schema   = mongoose.Schema;
 
-// Stndard RDF/Json Triple
+// Default RDF/json triple
 var rdf_trip_default = {
         "http://example.org/about" : {
             "http://purl.org/dc/elements/1.1/creator" : [ { "value" : "Anna Wilder", "type" : "literal" } ],
@@ -18,7 +18,7 @@ var rdf_trip_default = {
 
 var NodeMongoRdfFlat = function(host, db, port){
     
-    //Definieren des Schema
+    // Defining the schemas
     var RDFTriple = new Schema({
         subject: String,
         predicates: [RDFPredicate]
@@ -35,12 +35,14 @@ var NodeMongoRdfFlat = function(host, db, port){
         lang: { type: String, required: false }
     });
 
-    mongoose.connect("mongodb://localhost/test");
+    // Connecting to the database
+    mongoose.connect("mongodb://" + host + "/" + db);
 
+    // Initializing a new model
     mongoose.model('RDFTriple', RDFTriple );
     var RDFTripleModel = mongoose.model('RDFTriple');
 
-    //RDF/Json in Flat Objects und zurück wandeln
+    // Function for converting RDF/json to Flat Objects
     function _rdf_json_to_flat(rdf){
         for ( subject in rdf ){
             flat = {};
@@ -57,6 +59,7 @@ var NodeMongoRdfFlat = function(host, db, port){
         return flat;
     }
 
+    // Function for converting Flat Objects to RDF/json
     function _flat_to_rdf_json(flat){
         rdf = {};
         rdf[flat.subject] = {};
@@ -72,8 +75,8 @@ var NodeMongoRdfFlat = function(host, db, port){
     }
 
     return {
+        // Method for saving documents to the database
         insert: function(rdf_triple, callback){
-                    console.log("insert..");
             obj = new RDFTripleModel();
             obj.doc = _rdf_json_to_flat(rdf_triple);
             obj.save(function(err){
@@ -81,14 +84,13 @@ var NodeMongoRdfFlat = function(host, db, port){
             });
          },
 
+        // Method for querying one specific document
         findOne: function(query, callback){
             RDFTripleModel.findOne( function(err, doc){
                 if (err) callback(err);
-                console.log(doc);
                 if (doc) callback(null, _flat_to_rdf_json(doc));
             });
         }
-
     }
 }
 
@@ -97,12 +99,12 @@ var NodeMongoRdfFlat = function(host, db, port){
 test = NodeMongoRdfFlat("localhost", "test");
 
 test.insert(rdf_trip_default, function(err){
-    if (err) console.log("mh"+err.message);
+    if (err) console.log(err.message);
 });
 
-//test.findOne({}, function(err, doc){
-//    if (err) console.log(err);
-//    else console.log(doc);
-//})
+test.findOne({}, function(err, doc){
+    if (err) console.log(err);
+    else console.log(doc);
+})
 
 //mongoose.disconnect();
