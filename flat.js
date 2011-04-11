@@ -41,8 +41,9 @@ var NodeMongoRdfFlat = function(db, host, port){
 
   var RDFObject = new Schema({
     value: String,
-    type: String,
+    type: { type: String, enum: ['uri', 'literal', 'bnode'] },
     lang: { type: String, required: false },
+    datatype: { type: String, required: false },
   });
 
   // Connecting to the database
@@ -268,10 +269,10 @@ test = NodeMongoRdfFlat("test");
 //  else console.log(doc);
 // })
 
-// test.getModel().count({},function(err, count){
-//   if (err) console.log(err);
-//   else console.log(count);
-// });
+test.getModel().count({},function(err, count){
+  if (err) console.log(err);
+  else console.log(count);
+});
 
 //mongoose.disconnect();
 
