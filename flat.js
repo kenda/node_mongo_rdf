@@ -27,18 +27,15 @@ var rdf_trip_default2 = {
  * @class
  */
 var NodeMongoRdfFlat = function(db, host, port){
-  // TODO setting indices
-  //   - subject
-  //   - predicates.uri
 
   // Defining the schemas
   var RDFTriple = new Schema({
-    subject: String,
+    subject: { type: String, unique: true },
     predicates: [RDFPredicate]
   });
 
   var RDFPredicate = new Schema({
-    uri: String,
+    uri: { type: String, unique: true },
     objects: [RDFObject]
   });
 
@@ -46,7 +43,6 @@ var NodeMongoRdfFlat = function(db, host, port){
     value: String,
     type: String,
     lang: { type: String, required: false },
-    value2: { type: String, required: false }
   });
 
   // Connecting to the database
