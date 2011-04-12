@@ -1,6 +1,21 @@
 var fs  = require("fs"),
     rdf = require("./lib/flat");
 
+// Default RDF/json triple
+var rdf_trip_default1 = {
+  "http://example.org/about" : {
+    "http://purl.org/dc/elements/1.1/creator" : [ { "value" : "Anna Wilder", "type" : "literal" } ],
+    "http://purl.org/dc/elements/1.1/title"   : [ { "value" : "Anna's Homepage", "type" : "literal", "lang" : "en" } ]
+  }
+};
+var rdf_trip_default2 = {
+  "http://example.org/about2" : {
+    "http://purl.org/dc/elements/1.1/creator" : [ { "value" : "Tom Wilder", "type" : "literal" } ],
+    "http://purl.org/dc/elements/1.1/superwoman" : [ { "value" : "Kim Wilder", "type" : "literal" } ],
+    "http://purl.org/dc/elements/1.1/superman" : [ { "value" : "Gerad Wilder", "lang" : "de" } ]
+  }
+};
+
 test = rdf.NodeMongoRdfFlat("test");
 
 // console.log("starting.");
