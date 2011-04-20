@@ -1,0 +1,16 @@
+{
+  "name": "mongo_rdf",
+  "description": "Project for storing RDF data in MongoDB",
+  "version": "0.0.0",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/kenda/node_mongo_rdf.git"
+  },
+  "author": "Marcus Nitzschke",
+  "directories": {
+    "lib": "lib"
+  },
+  "engines": {
+    "node": "*"
+  }
+}
