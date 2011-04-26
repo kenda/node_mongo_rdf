@@ -30,17 +30,22 @@ function testFlat(){
   // mongoose.drop();
 
   flat.insert(rdf_trip_default1, function(err){
-    assert.equal(err, null);
-
-    flat.findOne({}, function(err, doc){
       assert.equal(err, null);
-      assert.notEqual(doc, null);
-    })
 
-    mongoose.count({},function(err, count){
-      assert.equal(err, null);
-      assert.equal(count, 3);
-    });
+      flat.findOne({}, function(err, doc){
+        assert.equal(err, null);
+        assert.notEqual(doc, null);
+      })
+
+      flat.findBySubject("http://example.org/about", function(err, docs){
+          assert.equal(err, null);
+          assert.notEqual(docs, null);
+      });
+
+      mongoose.count({},function(err, count){
+        assert.equal(err, null);
+        assert.equal(count, 3);
+      });
   });
 
 }
