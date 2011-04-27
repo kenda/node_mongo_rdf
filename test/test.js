@@ -65,7 +65,13 @@ function testDict(){
   //   assert.equal(err, null);
 
   // });
-    dict.findBySubject(/http:\/\/example.org\/about*/, function(err, docs){
+    dict.findBySubject(/http:\/\/exmple.org\/about*/, function(err, docs){
+        assert.equal(err, null);
+        // assert.notEqual(docs, null);
+        console.log(docs);
+    });
+
+    dict.findBySubjectPredicate(/http:\/\/example.org\/about*/, "http://purl.org/dc/elements/1.1/superwoman", function(err, docs){
         assert.equal(err, null);
         assert.notEqual(docs, null);
     });
