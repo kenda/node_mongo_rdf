@@ -42,6 +42,13 @@ function testFlat(){
           assert.notEqual(docs, null);
       });
 
+      flat.findBySubjectPredicate("http://example.org/about", 
+      "http://purl.org/dc/elements/1.1/title", function(err, docs){
+          console.log(err.message,docs);
+          assert.equal(err, null);
+          assert.notEqual(docs, null);
+      });
+
       mongoose.count({},function(err, count){
         assert.equal(err, null);
         assert.equal(count, 3);
@@ -49,17 +56,23 @@ function testFlat(){
   });
 
 }
-testFlat();
+// testFlat();
 
 function testDict(){
   dict = dict.NodeMongoRdfDict("test");
 
-  dict.insert(rdf_trip_default1, function(err){
-    assert.equal(err, null);
-  });
+  // dict.insert(rdf_trip_default1, function(err){
+  //   assert.equal(err, null);
 
-  dict.disconnect();
+  // });
+    dict.findBySubject(/http:\/\/example.org\/about*/, function(err, docs){
+        assert.equal(err, null);
+        assert.notEqual(docs, null);
+    });
+
+
+//  dict.disconnect();
 }
-testDict();
+ testDict();
 
 // vim: set tw=79 sw=2 ts=2 sts=2:
