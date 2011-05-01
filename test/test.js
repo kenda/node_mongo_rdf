@@ -49,6 +49,19 @@ function testFlat(){
           assert.notEqual(docs, null);
       });
 
+      flat.findByPredicateValue("http://purl.org/dc/elements/1.1/superman",
+        "Gerad Wilder", function(err, docs){
+          console.log(err.message,docs);
+          assert.equal(err, null);
+          assert.notEqual(docs, null);
+      });
+
+      flat.findByValue( "Gerad Wilder", function(err, docs){
+          console.log(err.message,docs);
+          assert.equal(err, null);
+          assert.notEqual(docs, null);
+      });
+
       mongoose.count({},function(err, count){
         assert.equal(err, null);
         assert.equal(count, 3);
@@ -56,7 +69,7 @@ function testFlat(){
   });
 
 }
-// testFlat();
+testFlat();
 
 function testDict(){
   dict = dict.NodeMongoRdfDict("test");
@@ -79,6 +92,6 @@ function testDict(){
 
 //  dict.disconnect();
 }
- testDict();
+ // testDict();
 
 // vim: set tw=79 sw=2 ts=2 sts=2:
