@@ -69,7 +69,7 @@ function testFlat(){
   });
 
 }
-testFlat();
+// testFlat();
 
 function testDict(){
   dict = dict.NodeMongoRdfDict("test");
@@ -81,7 +81,7 @@ function testDict(){
     dict.findBySubject(/http:\/\/exmple.org\/about*/, function(err, docs){
         assert.equal(err, null);
         // assert.notEqual(docs, null);
-        console.log(docs);
+        // console.log(docs);
     });
 
     dict.findBySubjectPredicate(/http:\/\/example.org\/about*/, "http://purl.org/dc/elements/1.1/superwoman", function(err, docs){
@@ -89,9 +89,15 @@ function testDict(){
         assert.notEqual(docs, null);
     });
 
+    dict.findByPredicateValue(/http:\/\/purl.org\/dc\/elements\/1.1\/creator*/, "Anna Wilder", function(err, docs){
+        assert.equal(err, null);
+        assert.notEqual(docs, null);
+    });
+
+
 
 //  dict.disconnect();
 }
- // testDict();
+ testDict();
 
 // vim: set tw=79 sw=2 ts=2 sts=2:
