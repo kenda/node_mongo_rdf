@@ -94,6 +94,11 @@ function testDict(){
         assert.notEqual(docs, null);
     });
 
+    dict.findByValue("Tom Wilder", function(err, docs){
+        assert.equal(err, null);
+        assert.notEqual(docs, null);
+    });
+
 
 
 //  dict.disconnect();
