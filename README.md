@@ -53,8 +53,8 @@ Triple collection:
 ### Howto
 1. Initialize plugin:
 
-        var mongo_rdf = require('node_mongo_rdf');
-        var foo = mongo_rdf.NodeMongoRDF("flat", "test");
+        var mongo_rdf = require('mongo_rdf');
+        var foo = mongo_rdf.NodeMongoRdf("flat", "test");
 	
 2. Do something
 

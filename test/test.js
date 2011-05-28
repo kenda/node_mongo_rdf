@@ -1,5 +1,4 @@
-var flat = require("../lib/flat"),
-    dict = require("../lib/dict"),
+var mongo_rdf  = require("../index"),
     assert = require("assert");
 
 // Default RDF/json triple
@@ -8,9 +7,9 @@ var rdf_trip_default1 = {
     "http://purl.org/dc/elements/1.1/creator" : [ { "value" : "Anna Wilder", "type" : "literal" } ],
     "http://purl.org/dc/elements/1.1/title"   : [ { "value" : "Anna's Homepage", "type" : "literal", "lang" : "en" } ],
     "http://purl.org/dc/elements/1.1/creator2" : [ { "value" : "Anna Wilder", "type" : "literal" } ],
-    "http://purl.org/dc/elements/1.1/title2"   : [ { "value" : "Anna's Homepage", "type" : "literal", "lang" : "en" } ],
-    "http://purl.org/dc/elements/1.1/creator3" : [ { "value" : "Anna Wilder", "type" : "literal" } ],
-    "http://purl.org/dc/elements/1.1/title3"   : [ { "value" : "Anna's Homepage", "type" : "literal", "lang" : "en" } ]
+    // "http://purl.org/dc/elements/1.1/title2"   : [ { "value" : "Anna's Homepage", "type" : "literal", "lang" : "en" } ],
+    // "http://purl.org/dc/elements/1.1/creator3" : [ { "value" : "Anna Wilder", "type" : "literal" } ],
+    // "http://purl.org/dc/elements/1.1/title3"   : [ { "value" : "Anna's Homepage", "type" : "literal", "lang" : "en" } ]
   },
   "http://example.org/about2" : {
     "http://purl.org/dc/elements/1.1/creator" : [ { "value" : "Tom Wilder", "type" : "literal" } ],
@@ -20,89 +19,49 @@ var rdf_trip_default1 = {
   "http://example.org/about3" : {
     "http://purl.org/dc/elements/1.1/creator" : [ { "value" : "Tom Wilder", "type" : "literal" } ],
     "http://purl.org/dc/elements/1.1/superwoman" : [ { "value" : "Kim Wilder", "type" : "literal" } ],
-    "http://purl.org/dc/elements/1.1/superman" : [ { "value" : "Gerad Wilder", "lang" : "de" } ]
+    "http://purl.org/dc/elements/1.1/superman" : 
+      [ 
+        { "value" : "Gerad Wilder", "lang" : "de" }, 
+        { "value" : "Bobbele Wilder", "lang" : "de", "type": "literal" },
+        { "value" : "Hans Wilder", "lang" : "de", "type": "literal" },
+        { "value" : "Babs Wilder", "lang" : "de", "type": "literal" }
+      ]
   }
 };
 
-function testFlat(){
-  flat = flat.NodeMongoRdfFlat("test");
-  mongoose = flat.getModel();
-  // mongoose.drop();
+function test(){
+	var foo = mongo_rdf.NodeMongoRdf("flat", "test");
 
-  flat.insert(rdf_trip_default1, function(err){
-      assert.equal(err, null);
+	  foo.insert(rdf_trip_default1, function(err){
+          assert.equal(err, null);
+	  });
 
-      flat.findOne({}, function(err, doc){
-        assert.equal(err, null);
-        assert.notEqual(doc, null);
-      })
-
-      flat.findBySubject("http://example.org/about", function(err, docs){
+      foo.findBySubject("http://example.org/about", function(err, docs){
+          // console.log(err,docs);
           assert.equal(err, null);
           assert.notEqual(docs, null);
       });
 
-      flat.findBySubjectPredicate("http://example.org/about", 
-      "http://purl.org/dc/elements/1.1/title", function(err, docs){
-          console.log(err.message,docs);
-          assert.equal(err, null);
-          assert.notEqual(docs, null);
+      foo.findBySubjectPredicate("http://example.org/about", 
+        "http://purl.org/dc/elements/1.1/title", function(err, docs){
+           // console.log(err,docs);
+           assert.equal(err, null);
+           assert.notEqual(docs, null);
       });
 
-      flat.findByPredicateValue("http://purl.org/dc/elements/1.1/superman",
+      foo.findByPredicateValue("http://purl.org/dc/elements/1.1/superman",
         "Gerad Wilder", function(err, docs){
-          console.log(err.message,docs);
+          // console.log(err,docs);
           assert.equal(err, null);
           assert.notEqual(docs, null);
       });
 
-      flat.findByValue( "Gerad Wilder", function(err, docs){
-          console.log(err.message,docs);
+      foo.findByValue( "Gerad Wilder", function(err, docs){
+          // console.log(err,docs);
           assert.equal(err, null);
           assert.notEqual(docs, null);
       });
-
-      mongoose.count({},function(err, count){
-        assert.equal(err, null);
-        assert.equal(count, 3);
-      });
-  });
-
-}
-// testFlat();
-
-function testDict(){
-  dict = dict.NodeMongoRdfDict("test");
-
-  // dict.insert(rdf_trip_default1, function(err){
-  //   assert.equal(err, null);
-
-  // });
-    dict.findBySubject(/http:\/\/exmple.org\/about*/, function(err, docs){
-        assert.equal(err, null);
-        // assert.notEqual(docs, null);
-        // console.log(docs);
-    });
-
-    dict.findBySubjectPredicate(/http:\/\/example.org\/about*/, "http://purl.org/dc/elements/1.1/superwoman", function(err, docs){
-        assert.equal(err, null);
-        assert.notEqual(docs, null);
-    });
-
-    dict.findByPredicateValue(/http:\/\/purl.org\/dc\/elements\/1.1\/creator*/, "Anna Wilder", function(err, docs){
-        assert.equal(err, null);
-        assert.notEqual(docs, null);
-    });
-
-    dict.findByValue("Tom Wilder", function(err, docs){
-        assert.equal(err, null);
-        assert.notEqual(docs, null);
-    });
-
-
-
-//  dict.disconnect();
-}
- testDict();
+};
+test();
 
 // vim: set tw=79 sw=2 ts=2 sts=2:
