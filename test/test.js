@@ -4,9 +4,9 @@ var mongo_rdf  = require("../index"),
 // Default RDF/json triple
 var rdf_trip_default1 = {
   "http://example.org/about" : {
-    "http://purl.org/dc/elements/1.1/creator" : [ { "value" : "Anna Wilder", "type" : "literal" } ],
+    "http://purl.org/dc/elements/1.1/creator" : [ { "value" : "http://example.org/about2", "type" : "uri" } ],
     "http://purl.org/dc/elements/1.1/title"   : [ { "value" : "Anna's Homepage", "type" : "literal", "lang" : "en" } ],
-    "http://purl.org/dc/elements/1.1/creator2" : [ { "value" : "Anna Wilder", "type" : "literal" } ],
+    "http://purl.org/dc/elements/1.1/creator2" : [ { "value" : "http://example.org/about2", "type" : "uri" } ],
     // "http://purl.org/dc/elements/1.1/title2"   : [ { "value" : "Anna's Homepage", "type" : "literal", "lang" : "en" } ],
     // "http://purl.org/dc/elements/1.1/creator3" : [ { "value" : "Anna Wilder", "type" : "literal" } ],
     // "http://purl.org/dc/elements/1.1/title3"   : [ { "value" : "Anna's Homepage", "type" : "literal", "lang" : "en" } ]
@@ -18,11 +18,11 @@ var rdf_trip_default1 = {
   },
   "http://example.org/about3" : {
     "http://purl.org/dc/elements/1.1/creator" : [ { "value" : "Tom Wilder", "type" : "literal" } ],
-    "http://purl.org/dc/elements/1.1/superwoman" : [ { "value" : "Kim Wilder", "type" : "literal" } ],
+//    "http://purl.org/dc/elements/1.1/superwoman" : [ { "value" : "Kim Wilder", "type" : "literal" } ],
     "http://purl.org/dc/elements/1.1/superman" : 
       [ 
         { "value" : "Gerad Wilder", "lang" : "de" }, 
-        { "value" : "Bobbele Wilder", "lang" : "de", "type": "literal" },
+        { "value" : "Bobbele Wilder", "lang" : "de", "type": "pups" },
         { "value" : "Hans Wilder", "lang" : "de", "type": "literal" },
         { "value" : "Babs Wilder", "lang" : "de", "type": "literal" }
       ]
@@ -37,6 +37,12 @@ function test(){
 	  });
 
       foo.findBySubject("http://example.org/about", function(err, docs){
+          // console.log(err,docs);
+          assert.equal(err, null);
+          assert.notEqual(docs, null);
+      });
+
+    foo.findBySubjectDeep("http://example.org/about", function(err, docs){
           // console.log(err,docs);
           assert.equal(err, null);
           assert.notEqual(docs, null);
