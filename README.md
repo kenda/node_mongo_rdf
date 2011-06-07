@@ -55,6 +55,7 @@ Triple collection:
 
         var mongo_rdf = require('mongo_rdf');
         var foo = mongo_rdf.NodeMongoRdf("flat", "test");
+where the first argument ist the wrapper type ("flat" or "dict") and the second argument the name of the database.
 	
 2. Do something
 
@@ -72,6 +73,7 @@ see [-placeholder-]()
 - `insert(rdf_json_triples, callback)`
 - `replace(rdf_json_triples, callback)`
 - `findBySubject(subject, callback)`
+- `findBySubjectDeep(subject, callback)`
 - `findBySubjectPredicate(subject, predicate, callback)`
 - `findByPredicateValue(predicate, value, callback)`
 - `findByValue(value, callback)`
